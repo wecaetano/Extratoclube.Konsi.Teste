@@ -1,5 +1,6 @@
 ﻿using Extratoclube.Konsi.Domain.Contracts.v1;
 using Extratoclube.Konsi.Domain.DTOs.v1;
+using Extratoclube.Konsi.Domain.Resources.v1;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,14 +8,14 @@ namespace Extratoclube.Konsi.Api.Controllers.v1;
 [Route("api/v1/registration")]
 [Produces("application/json")]
 [ApiController]
-public class RegistrationController : ControllerBase
+public class RegistrationController : BaseController
 {
     private readonly ILogger<RegistrationController> _logger;
     private readonly ICrawlerService _crawlerService;
 
     public RegistrationController(
-        ILogger<RegistrationController> logger, 
-        ICrawlerService crawlerService)
+        ILogger<RegistrationController> logger,
+        ICrawlerService crawlerService) : base()
     {
         _logger = logger;
         _crawlerService = crawlerService;
@@ -26,7 +27,10 @@ public class RegistrationController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> GetBenefitsAsync([FromBody] RegistrationRequestDto dto)
     {
-        _crawlerService.CrawlerAsync();
-        return Ok();
+        _logger.LogInformation(string.Format(Message.EnpointStart, nameof(RegistrationController)));
+
+        var result = await _crawlerService.CrawlerAsync(dto);
+
+        return ReturnFromNotifications(result);
     }
 }

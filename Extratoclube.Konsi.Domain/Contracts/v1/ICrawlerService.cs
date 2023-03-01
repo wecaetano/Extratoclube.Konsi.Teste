@@ -1,6 +1,8 @@
-﻿namespace Extratoclube.Konsi.Domain.Contracts.v1;
+﻿using Extratoclube.Konsi.Domain.DTOs.v1;
+
+namespace Extratoclube.Konsi.Domain.Contracts.v1;
 
 public interface ICrawlerService
 {
-    string CrawlerAsync();
+    Task<CustomApiResponse> CrawlerAsync(RegistrationRequestDto dto);
 }
