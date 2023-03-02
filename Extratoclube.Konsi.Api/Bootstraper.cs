@@ -19,7 +19,8 @@ public static class Bootstraper
 
         var sectionSelenium = configuration.GetSection("Selenium");
 
-        services.Configure<SeleniumOptions>(s => {
+        services.Configure<SeleniumOptions>(s =>
+        {
             s.WebUrl = sectionSelenium.GetSection("WebUrl").Value;
         });
     }

@@ -1,7 +1,6 @@
 ﻿using Extratoclube.Konsi.Domain.Contracts.v1;
 using Extratoclube.Konsi.Domain.DTOs.v1;
 using Extratoclube.Konsi.Domain.Resources.v1;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Extratoclube.Konsi.Api.Controllers.v1;

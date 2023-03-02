@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  extratoclube.konsi.api:
+    image: ${DOCKER_REGISTRY-}extratoclubekonsiapi
+    build:
+      context: .
+      dockerfile: Extratoclube.Konsi.Api/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - selenium
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - SELENIUM_GRID_URL=http://selenium:4444/wd/hub
+
+  selenium:
+    image: selenium/standalone-chrome:dev
+    ports:
+      - "4444:4444"
+      - "7900:7900"
+    shm_size: 2g

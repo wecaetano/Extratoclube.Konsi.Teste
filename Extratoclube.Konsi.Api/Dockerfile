@@ -19,4 +19,6 @@ RUN dotnet publish "Extratoclube.Konsi.Api.csproj" -c Release -o /app/publish /p
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV ASPNETCORE_ENVIRONMENT=Development
+ENV SELENIUM_GRID_URL=http://selenium:4444/wd/hub
 ENTRYPOINT ["dotnet", "Extratoclube.Konsi.Api.dll"]
