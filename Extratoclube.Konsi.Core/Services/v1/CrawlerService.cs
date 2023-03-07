@@ -11,7 +11,7 @@ using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
 using System.Net;
 
-namespace Extratoclube.Konsi.Infraestrutura.Services.v1;
+namespace Extratoclube.Konsi.Core.Services.v1;
 
 public class CrawlerService : ICrawlerService
 {

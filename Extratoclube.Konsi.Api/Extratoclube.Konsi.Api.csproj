@@ -21,8 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Extratoclube.Konsi.Core\Extratoclube.Konsi.Core.csproj" />
     <ProjectReference Include="..\Extratoclube.Konsi.Domain\Extratoclube.Konsi.Domain.csproj" />
-    <ProjectReference Include="..\Extratoclube.Konsi.Infraestrutura\Extratoclube.Konsi.Infraestrutura.csproj" />
   </ItemGroup>
 
 </Project>

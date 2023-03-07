@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extratoclube.Konsi.Api", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extratoclube.Konsi.Domain", "Extratoclube.Konsi.Domain\Extratoclube.Konsi.Domain.csproj", "{5EBDBACB-AAA3-48DF-89A9-91CD8E413C89}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extratoclube.Konsi.Infraestrutura", "Extratoclube.Konsi.Infraestrutura\Extratoclube.Konsi.Infraestrutura.csproj", "{FEFAF4B8-34A0-4215-858C-3EC79E1339A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Extratoclube.Konsi.Core", "Extratoclube.Konsi.Core\Extratoclube.Konsi.Core.csproj", "{FEFAF4B8-34A0-4215-858C-3EC79E1339A5}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{32E746CA-B943-495B-A893-E56FAC6C7E1C}"
 EndProject

@@ -1,6 +1,6 @@
 ﻿using Extratoclube.Konsi.Domain.Contracts.v1;
 using Extratoclube.Konsi.Domain.Options.v1;
-using Extratoclube.Konsi.Infraestrutura.Services.v1;
+using Extratoclube.Konsi.Core.Services.v1;
 
 namespace Extratoclube.Konsi.Api;
 
