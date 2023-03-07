@@ -9,9 +9,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Support.UI;
 using System.Net;
-using System.Reflection;
 
 namespace Extratoclube.Konsi.Infraestrutura.Services.v1;
 
@@ -23,7 +21,7 @@ public class CrawlerService : ICrawlerService
     private readonly ILogger<CrawlerService> _logger;
 
     public CrawlerService(
-        IOptions<SeleniumOptions> seleniumOptions, 
+        IOptions<SeleniumOptions> seleniumOptions,
         ILogger<CrawlerService> logger)
     {
         _seleniumOptions = seleniumOptions;
@@ -35,7 +33,7 @@ public class CrawlerService : ICrawlerService
         _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
         // URL de login
-        _loginUrl = _seleniumOptions.Value.WebUrl;
+        _loginUrl = seleniumOptions.Value.WebUrl;
         _logger = logger;
     }
 
@@ -56,8 +54,8 @@ public class CrawlerService : ICrawlerService
             // Realiza o login
             Login(dto.Login, dto.Password);
 
-            // Navega para a página do menu
-            NavigateToMenuPage();
+            // Navega para a página do acordion
+            NavigateToAcordion();
 
             // Obtém o extrato
             var result = await GetExtrato(dto.Document);
@@ -84,7 +82,6 @@ public class CrawlerService : ICrawlerService
         }
         finally
         {
-            // Fecha o navegador
             Dispose();
         }
 
@@ -113,13 +110,14 @@ public class CrawlerService : ICrawlerService
         var buttonElement = _driver.FindElement(By.Id("botao"));
         buttonElement.Click();
 
+        Thread.Sleep(500);
         // Encontra o botão de fechar e clica nele para fechar qualquer mensagem de alerta ou popup
         var buttonCloseElement = _driver.FindElement(By.XPath("//app-modal-fila/ion-button"));
         buttonCloseElement.Click();
     }
 
     // Método para navegar até a página do menu
-    public void NavigateToMenuPage()
+    public void NavigateToAcordion()
     {
         Thread.Sleep(500);
         // Encontra o elemento do menu e clica nele
