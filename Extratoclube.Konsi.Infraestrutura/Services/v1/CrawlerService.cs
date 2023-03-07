@@ -5,13 +5,14 @@ using Extratoclube.Konsi.Domain.Options.v1;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using System.Net;
 using System.Reflection;
 
 namespace Extratoclube.Konsi.Infraestrutura.Services.v1;
 
-// Definindo a classe CrawlerService que implementa a interface ICrawlerService
 public class CrawlerService : ICrawlerService
 {
     protected readonly IOptions<SeleniumOptions> _seleniumOptions;
@@ -24,16 +25,15 @@ public class CrawlerService : ICrawlerService
 
         // Opções do Chrome
         ChromeOptions options = new ChromeOptions();
-        options.AddArgument("--headless"); // Executa em modo headless (sem interface gráfica)
-
-        // Caminho do driver do navegador
-        var driverPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
+        //options.AddArgument("--headless"); // Executa em modo headless (sem interface gráfica)
+              
         // Inicializa o WebDriver remoto com o Selenium Server
-        _driver = new RemoteWebDriver(new Uri("http://selenium:4444/wd/hub"), options);
+        //_driver = new RemoteWebDriver(new Uri("http://selenium:4444/wd/hub"), options);
 
-        // Define o tempo de espera implícito do WebDriver para 30 segundos
-        _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
+        _driver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), options);
+
+        // Define o tempo de espera implícito do WebDriver para 10 segundos
+        _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
         // URL de login
         _loginUrl = _seleniumOptions.Value.WebUrl;
@@ -108,24 +108,25 @@ public class CrawlerService : ICrawlerService
         var buttonElement = _driver.FindElement(By.Id("botao"));
         buttonElement.Click();
 
-        // Define o tempo de espera implícito como 30 segundos
-        _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(30);
-
         // Encontra o botão de fechar e clica nele para fechar qualquer mensagem de alerta ou popup
-        var buttonCloseElement = _driver.FindElement(By.XPath("//ion-modal[@id='ion-overlay-1']/div[2]/app-modal-fila/ion-button"));
+        var buttonCloseElement = _driver.FindElement(By.XPath("//app-modal-fila/ion-button"));
         buttonCloseElement.Click();
     }
 
     // Método para navegar até a página do menu
     private void NavigateToMenuPage()
     {
+        Thread.Sleep(500);
         // Encontra o elemento do menu e clica nele
         var menuTabElement = _driver.FindElement(By.XPath("//ion-menu"));
         menuTabElement.Click();
 
-        // Encontra o elemento do botão "Encontrar Benefício" e clica nele
-        var colapsibleFindBenefitElement = _driver.FindElement(By.XPath("//ion-button[9]"));
+        Thread.Sleep(500);
+        //Encontra o elemento econtrar benefícios de um CPF
+        var colapsibleFindBenefitElement = _driver.FindElement(By.XPath("//span[contains(text(), 'Encontrar Benefícios de um CPF')]"));
+        new Actions(_driver).MoveToElement(colapsibleFindBenefitElement).Perform();
         colapsibleFindBenefitElement.Click();
+
     }
 
     // Método para obter o extrato do documento com o ID fornecido
@@ -133,15 +134,18 @@ public class CrawlerService : ICrawlerService
     {
         // Encontra o elemento de entrada de documento e insere o ID do documento fornecido
         var inputDocumentElement = _driver.FindElement(By.XPath("//input[@name='ion-input-1']"));
+        new Actions(_driver).MoveToElement(inputDocumentElement).Perform();
         inputDocumentElement.Click();
         inputDocumentElement.SendKeys(domcumentId);
 
         // Encontra o botão "Encontrar Benefício" e clica nele para buscar o documento
         var buttonBenefitFindElement = _driver.FindElement(By.XPath("//ion-card/ion-grid/ion-row[2]/ion-col/ion-card/ion-button"));
+        new Actions(_driver).MoveToElement(buttonBenefitFindElement).Perform();
         buttonBenefitFindElement.Click();
 
         // Encontra o elemento com o resultado do extrato e retorna seu texto como uma tarefa
         var resultElement = _driver.FindElement(By.XPath("//ion-grid[@id='extratoonline']/ion-row[2]/ion-col/ion-card/ion-grid/ion-row[2]/ion-col/ion-card/ion-item/ion-label"));
+        new Actions(_driver).MoveToElement(resultElement).Perform();
         return Task.FromResult(resultElement.Text);
     }
 
