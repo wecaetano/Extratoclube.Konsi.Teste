@@ -10,6 +10,7 @@ public class BaseController : ControllerBase
     {
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     private IActionResult FormatResponseBySuccessFlow(int statusCode, CustomApiResponse response)
     {
         if (statusCode < 200 || statusCode == 202 || statusCode == 304)
@@ -20,6 +21,7 @@ public class BaseController : ControllerBase
         return StatusCode(statusCode, response);
     }
 
+    [ApiExplorerSettings(IgnoreApi = true)]
     public IActionResult ReturnFromNotifications(CustomApiResponse response)
     {
         if (response.Notifications.Any((Notification x) => x.Type == NotificationType.NotFound))

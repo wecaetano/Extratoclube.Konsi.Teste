@@ -22,6 +22,7 @@ public static class Bootstraper
         services.Configure<SeleniumOptions>(s =>
         {
             s.WebUrl = sectionSelenium.GetSection("WebUrl").Value;
+            s.SeleinumUrl = sectionSelenium.GetSection("SeleinumUrl").Value;
         });
     }
 }

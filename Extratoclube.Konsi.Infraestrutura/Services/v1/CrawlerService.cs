@@ -27,7 +27,7 @@ public class CrawlerService : ICrawlerService
         _seleniumOptions = seleniumOptions;
 
         // Inicializa o WebDriver remoto com o Selenium Server
-        _driver = new RemoteWebDriver(new Uri("http://selenium:4444/wd/hub"), new ChromeOptions());
+        _driver = new RemoteWebDriver(new Uri(seleniumOptions.Value.SeleinumUrl), new ChromeOptions());
 
         // Define o tempo de espera implícito do WebDriver para 10 segundos
         _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);

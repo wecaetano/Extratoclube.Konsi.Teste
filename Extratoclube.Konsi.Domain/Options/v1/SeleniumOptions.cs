@@ -2,4 +2,6 @@
 public class SeleniumOptions
 {
     public string WebUrl { get; set; }
+
+    public string SeleinumUrl { get; set; }
 }
