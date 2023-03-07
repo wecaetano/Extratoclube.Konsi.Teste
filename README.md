@@ -11,5 +11,5 @@ Dentro da pasta `src` rodar o comando:
 ### Swagger
 Acessar o caminho `http://localhost:8080/swagger`.
 ### Tecnologias
-- .NET 6
+- .NET 6, C#
 - Selenium Web Driver 4.8.1
