@@ -2,6 +2,8 @@
 using Extratoclube.Konsi.Domain.DTOs.v1;
 using Extratoclube.Konsi.Domain.Helpers.v1;
 using Extratoclube.Konsi.Domain.Options.v1;
+using Extratoclube.Konsi.Domain.Resources.v1;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -18,25 +20,23 @@ public class CrawlerService : ICrawlerService
     protected readonly IOptions<SeleniumOptions> _seleniumOptions;
     private readonly IWebDriver _driver;
     private readonly string _loginUrl;
+    private readonly ILogger<CrawlerService> _logger;
 
-    public CrawlerService(IOptions<SeleniumOptions> seleniumOptions)
+    public CrawlerService(
+        IOptions<SeleniumOptions> seleniumOptions, 
+        ILogger<CrawlerService> logger)
     {
         _seleniumOptions = seleniumOptions;
 
-        // Opções do Chrome
-        ChromeOptions options = new ChromeOptions();
-        //options.AddArgument("--headless"); // Executa em modo headless (sem interface gráfica)
-              
         // Inicializa o WebDriver remoto com o Selenium Server
-        //_driver = new RemoteWebDriver(new Uri("http://selenium:4444/wd/hub"), options);
-
-        _driver = new RemoteWebDriver(new Uri("http://localhost:4444/wd/hub"), options);
+        _driver = new RemoteWebDriver(new Uri("http://selenium:4444/wd/hub"), new ChromeOptions());
 
         // Define o tempo de espera implícito do WebDriver para 10 segundos
         _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
         // URL de login
         _loginUrl = _seleniumOptions.Value.WebUrl;
+        _logger = logger;
     }
 
     // Implementação do método CrawlerAsync da interface ICrawlerService
@@ -44,6 +44,8 @@ public class CrawlerService : ICrawlerService
     {
         try
         {
+            _logger.LogInformation(string.Format(Message.ServiceStart, nameof(CrawlerService)));
+
             // Valida o CPF
             if (!Validate.Cpf(dto.Document))
                 throw new ApplicationException("CPF inválido");
@@ -60,6 +62,8 @@ public class CrawlerService : ICrawlerService
             // Obtém o extrato
             var result = await GetExtrato(dto.Document);
 
+            _logger.LogInformation(string.Format(Message.ServiceEnd, nameof(CrawlerService)));
+
             // Retorna a resposta personalizada
             return new CustomApiResponse()
             {
@@ -69,6 +73,8 @@ public class CrawlerService : ICrawlerService
         }
         catch (Exception ex)
         {
+            _logger.LogError(string.Format(Message.Error, nameof(CrawlerService)));
+
             // Retorna uma resposta personalizada em caso de erro
             return new CustomApiResponse()
             {
@@ -85,14 +91,13 @@ public class CrawlerService : ICrawlerService
     }
 
     // Navega para a URL de login
-    private void NavigateTo()
+    public void NavigateTo()
     {
         _driver.Navigate().GoToUrl(_loginUrl);
-        var s = _driver.PageSource; // Página de origem do HTML
     }
 
     // Método para fazer login na aplicação usando as credenciais fornecidas
-    private void Login(string login, string password)
+    public void Login(string login, string password)
     {
         // Encontra o elemento de entrada do usuário e insere o nome de usuário fornecido
         var userElement = _driver.FindElement(By.Id("user"));
@@ -114,14 +119,14 @@ public class CrawlerService : ICrawlerService
     }
 
     // Método para navegar até a página do menu
-    private void NavigateToMenuPage()
+    public void NavigateToMenuPage()
     {
         Thread.Sleep(500);
         // Encontra o elemento do menu e clica nele
         var menuTabElement = _driver.FindElement(By.XPath("//ion-menu"));
         menuTabElement.Click();
 
-        Thread.Sleep(500);
+        Thread.Sleep(1000);
         //Encontra o elemento econtrar benefícios de um CPF
         var colapsibleFindBenefitElement = _driver.FindElement(By.XPath("//span[contains(text(), 'Encontrar Benefícios de um CPF')]"));
         new Actions(_driver).MoveToElement(colapsibleFindBenefitElement).Perform();
@@ -130,8 +135,10 @@ public class CrawlerService : ICrawlerService
     }
 
     // Método para obter o extrato do documento com o ID fornecido
-    private Task<string> GetExtrato(string domcumentId)
+    public Task<List<string>> GetExtrato(string domcumentId)
     {
+        var result = new List<string>();
+
         // Encontra o elemento de entrada de documento e insere o ID do documento fornecido
         var inputDocumentElement = _driver.FindElement(By.XPath("//input[@name='ion-input-1']"));
         new Actions(_driver).MoveToElement(inputDocumentElement).Perform();
@@ -144,9 +151,18 @@ public class CrawlerService : ICrawlerService
         buttonBenefitFindElement.Click();
 
         // Encontra o elemento com o resultado do extrato e retorna seu texto como uma tarefa
-        var resultElement = _driver.FindElement(By.XPath("//ion-grid[@id='extratoonline']/ion-row[2]/ion-col/ion-card/ion-grid/ion-row[2]/ion-col/ion-card/ion-item/ion-label"));
-        new Actions(_driver).MoveToElement(resultElement).Perform();
-        return Task.FromResult(resultElement.Text);
+        var resultCardElement = _driver.FindElement(By.XPath("//*[@id=\"extratoonline\"]/ion-row[2]/ion-col/ion-card/ion-grid/ion-row[2]/ion-col/ion-card"));
+        var resultElements = resultCardElement.FindElements(By.TagName("ion-item"));
+
+        if (resultElements.Any())
+        {
+            foreach (var element in resultElements)
+            {
+                result.Add(element.Text);
+            }
+        }
+
+        return Task.FromResult(result);
     }
 
     // Método para liberar os recursos usados pelo driver do navegador
