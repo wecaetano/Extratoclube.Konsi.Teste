@@ -65,7 +65,7 @@ public class CrawlerService : ICrawlerService
             // Retorna a resposta personalizada
             return new CustomApiResponse()
             {
-                Result = result,
+                Result = new { Benefits = result },
                 Status = HttpStatusCode.OK,
             };
         }
