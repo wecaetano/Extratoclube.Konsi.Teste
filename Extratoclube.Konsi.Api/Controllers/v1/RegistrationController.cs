@@ -24,12 +24,12 @@ public class RegistrationController : BaseController
     [ProducesResponseType(200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> GetBenefitsAsync([FromBody] RegistrationRequestDto dto)
+    public async Task<IActionResult> GetBenefitsAsync([FromBody] BenefitRequestDto dto)
     {
         _logger.LogInformation(string.Format(Message.EnpointStart, nameof(RegistrationController)));
 
         var result = await _crawlerService.CrawlerAsync(dto);
 
-        return ReturnFromNotifications(result);
+        return ReturnFromNotifications<BenefitsResponseDto>(result);
     }
 }

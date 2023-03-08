@@ -18,11 +18,9 @@ public class CrawlerService : ICrawlerService
     protected readonly IOptions<SeleniumOptions> _seleniumOptions;
     private readonly IWebDriver _driver;
     private readonly string _loginUrl;
-    private readonly ILogger<CrawlerService> _logger;
 
     public CrawlerService(
-        IOptions<SeleniumOptions> seleniumOptions,
-        ILogger<CrawlerService> logger)
+        IOptions<SeleniumOptions> seleniumOptions)
     {
         _seleniumOptions = seleniumOptions;
 
@@ -34,16 +32,13 @@ public class CrawlerService : ICrawlerService
 
         // URL de login
         _loginUrl = seleniumOptions.Value.WebUrl;
-        _logger = logger;
     }
 
     // Implementação do método CrawlerAsync da interface ICrawlerService
-    public async Task<CustomApiResponse> CrawlerAsync(RegistrationRequestDto dto)
+    public async Task<CustomApiResponse<BenefitsResponseDto>> CrawlerAsync(BenefitRequestDto dto)
     {
         try
         {
-            _logger.LogInformation(string.Format(Message.ServiceStart, nameof(CrawlerService)));
-
             // Valida o CPF
             if (!Validate.Cpf(dto.Document))
                 throw new ApplicationException("CPF inválido");
@@ -60,21 +55,17 @@ public class CrawlerService : ICrawlerService
             // Obtém o extrato
             var result = await GetExtrato(dto.Document);
 
-            _logger.LogInformation(string.Format(Message.ServiceEnd, nameof(CrawlerService)));
-
             // Retorna a resposta personalizada
-            return new CustomApiResponse()
+            return new CustomApiResponse<BenefitsResponseDto>()
             {
-                Result = new { Benefits = result },
+                Result = new BenefitsResponseDto { Benefits = result },
                 Status = HttpStatusCode.OK,
             };
         }
         catch (Exception ex)
         {
-            _logger.LogError(string.Format(Message.Error, nameof(CrawlerService)));
-
             // Retorna uma resposta personalizada em caso de erro
-            return new CustomApiResponse()
+            return new CustomApiResponse<BenefitsResponseDto>()
             {
                 Status = HttpStatusCode.InternalServerError,
                 Notifications = new List<Notification> { new Notification { Message = ex.Message } }
@@ -88,13 +79,13 @@ public class CrawlerService : ICrawlerService
     }
 
     // Navega para a URL de login
-    public void NavigateTo()
+    private void NavigateTo()
     {
         _driver.Navigate().GoToUrl(_loginUrl);
     }
 
     // Método para fazer login na aplicação usando as credenciais fornecidas
-    public void Login(string login, string password)
+    private void Login(string login, string password)
     {
         // Encontra o elemento de entrada do usuário e insere o nome de usuário fornecido
         var userElement = _driver.FindElement(By.Id("user"));
@@ -117,7 +108,7 @@ public class CrawlerService : ICrawlerService
     }
 
     // Método para navegar até a página do menu
-    public void NavigateToAcordion()
+    private void NavigateToAcordion()
     {
         Thread.Sleep(500);
         // Encontra o elemento do menu e clica nele
@@ -133,7 +124,7 @@ public class CrawlerService : ICrawlerService
     }
 
     // Método para obter o extrato do documento com o ID fornecido
-    public Task<List<string>> GetExtrato(string domcumentId)
+    private Task<List<string>> GetExtrato(string domcumentId)
     {
         var result = new List<string>();
 

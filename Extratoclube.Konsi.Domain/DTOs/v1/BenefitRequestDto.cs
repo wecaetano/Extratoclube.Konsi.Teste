@@ -1,5 +1,5 @@
 ﻿namespace Extratoclube.Konsi.Domain.DTOs.v1;
-public sealed record RegistrationRequestDto
+public sealed record BenefitRequestDto
 {
     public string Document { get; set; }
     public string Login { get; set; }
