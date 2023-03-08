@@ -4,5 +4,5 @@ namespace Extratoclube.Konsi.Domain.Contracts.v1;
 
 public interface ICrawlerService
 {
-    Task<CustomApiResponse> CrawlerAsync(RegistrationRequestDto dto);
+    Task<CustomApiResponse<BenefitsResponseDto>> CrawlerAsync(BenefitRequestDto dto);
 }

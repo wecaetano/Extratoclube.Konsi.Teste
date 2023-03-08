@@ -1,9 +1,9 @@
 ﻿using System.Net;
 
 namespace Extratoclube.Konsi.Domain.DTOs.v1;
-public class CustomApiResponse
+public class CustomApiResponse<T>
 {
-    public object? Result { get; init; }
+    public T? Result { get; init; }
 
     public long Timestamp => new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
 
