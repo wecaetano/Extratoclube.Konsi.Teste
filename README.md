@@ -7,7 +7,7 @@ O Desafio consiste em fazer uma API que busque e retorne a matrícula do servido
 Dentro da pasta `src` rodar o comando:
 `docker-compose up --build`.
 ### Api
-`http://localhost:8080/api/v1/registration/benefits`.
+`http://localhost:8080/api/v1/extract/benefits`.
 ### Swagger
 Acessar o caminho `http://localhost:8080/swagger`.
 ### Tecnologias
